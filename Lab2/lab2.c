@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h> 			// для exit
 #include <time.h>
-#include <string.h>				// strcat
+#include <string.h>			// strcat
 #include <stdbool.h>
 
 #include "lab2.h"
@@ -62,7 +62,7 @@ void task2(void){
     }
     
     printf("Enter integer values for a and b: ");	
-    scanf("%d %d", p1,p2);						// считываем значения
+    scanf("%d %d", p1,p2);					// считываем значения
 
     *p1 /= 2;
     printf("a: %d\nb: %d", *p1,*p2);
@@ -81,8 +81,8 @@ void task3(void){
     count = 0;
     product = 1.0;
 
-    do{														// считываем размер массива
-        printf("\nEnter the size of array: ");
+    do{								
+        printf("\nEnter the size of array: ");				// считываем размер массива
         scanf("%d", &n);
         if(n <= 0){
             printf("Array size should be positive integer");
@@ -95,13 +95,13 @@ void task3(void){
         exit(0);
     }
 
-    int *less1_indexes = (int*)calloc(n, sizeof(int));		// создаем массив для элементов, меньших 1
+    int *less1_indexes = (int*)calloc(n, sizeof(int));			// создаем массив для элементов, меньших 1
     if(less1_indexes == NULL){
         printf("Can't allocate memory\n");
         exit(0);
     }
 
-    for(int i = 0; i < n; i++){								// ищем элементы, считаем количество и произведение 
+    for(int i = 0; i < n; i++){						// ищем элементы, считаем количество и произведение 
         printf("\nEnter element №%d of the array: ", i+1);
         scanf("%lf", a1+i);
         if(a1[i] < UPPER_LIMIT){
@@ -205,7 +205,7 @@ void selection_sort(double *C, int n){
                 min_ind = j;
             }
         }
-        if (min_ind != i)					// если минимальный не на своем месте, переставляем с текущим
+        if (min_ind != i)			// если минимальный не на своем месте, переставляем с текущим
         {
             temp = C[i];
             C[i] = C[min_ind];
@@ -290,7 +290,7 @@ void add_circle(CIRCLE **circle, int limit){
         exit(0);
     }
     (*circle)->radius = (double)rand()/RAND_MAX * limit;
-    (*circle)->center->x = ((double)rand()/RAND_MAX*2.0-1.0)*limit;	// генерим координаты от -limit до +limit
+    (*circle)->center->x = ((double)rand()/RAND_MAX*2.0-1.0)*limit;		// генерим координаты от -limit до +limit
     (*circle)->center->y = ((double)rand()/RAND_MAX*2.0-1.0)*limit;
 }
 
@@ -338,14 +338,14 @@ void task7(void){
 	printf("\n\n----- SORTED BY NUMBER \"CITY\" ROOMS ---------");
 	display_rooms(city_rooms, city_amount);
 
-	release_rooms(rooms, ROOMS_COUNT);			// освобождаем память
+	release_rooms(rooms, ROOMS_COUNT);					// освобождаем память
 	release_rooms(city_rooms, city_amount);
 }
 
 void create_rooms(APARTMENT *** rooms, int amount){
 
-	srand(time(NULL));											// выделяем память под массив и заполняем
-	*rooms = (APARTMENT**)calloc(amount, sizeof(APARTMENT*));
+	srand(time(NULL));							
+	*rooms = (APARTMENT**)calloc(amount, sizeof(APARTMENT*));		// выделяем память под массив и заполняем
 	if(rooms == NULL){
     	printf("Can't allocate memory\n");
     	exit(0);
@@ -373,14 +373,14 @@ void add_room(APARTMENT ** room){
 
 	start_ind = 0;
 	if((double)rand()/RAND_MAX < CITY_FREQUENCY){								
-		strcat((*room)->hotel_name,"City");					// если карта легла, добавляем City в начало названия отеля
+		strcat((*room)->hotel_name,"City");				// если карта легла, добавляем City в начало названия отеля
 		start_ind = 4;
 	}
 
 	for (int i = start_ind; i < HOTEL_NAME_SIZE; i++) {
 		(*room)->hotel_name[i] = '0' + rand() % 72;			// генерим остаток названия отеля
 	}
-	(*room)->hotel_name[HOTEL_NAME_SIZE - 1] = '\0';		// последний штрих
+	(*room)->hotel_name[HOTEL_NAME_SIZE - 1] = '\0';			// последний штрих
 
 	(*room)->number = rand()%MAX_ROOM_NUMBER;				// генерим остальные поля
 	(*room)->capacity = rand()%(MAX_ROOM_CAPACITY-1) + 1;		
@@ -412,9 +412,9 @@ int copy_city_rooms(APARTMENT ** rooms, APARTMENT *** city_rooms){
 	int counter = 0;
 	const char c[] = "City";
 	int * city_indexes = (int*)calloc(ROOMS_COUNT, sizeof(int));	// массив для индексов комнат 
-																	// с названием отеля, начинающегося на "City"
+									// с названием отеля, начинающегося на "City"
 	for(int i = 0; i < ROOMS_COUNT; i++){				
-		bool is_equal = true;							// ищем комнаты, считаем количество, заносим индексы
+		bool is_equal = true;					// ищем комнаты, считаем количество, заносим индексы
 
 		for(int j = 0; j < 4;j++){
 			if(c[j] != (rooms[i]->hotel_name)[j]){		// сравниваем названия отелей
@@ -433,7 +433,7 @@ int copy_city_rooms(APARTMENT ** rooms, APARTMENT *** city_rooms){
 		exit(0);
 	}
 
-	for (int i = 0; i < counter; i++) {					// переставляем все поля структуры
+	for (int i = 0; i < counter; i++) {				// переставляем все поля структуры
 		(*city_rooms)[i] = rooms[city_indexes[i]];
 	}
 	return counter;
@@ -461,7 +461,7 @@ void sort_rooms(APARTMENT *** rooms, int n){
 }
 
 void print_room_info(APARTMENT * room){
-	printf("\n\nHotel name: %s", room->hotel_name);		// вывод информации о комнате
+	printf("\n\nHotel name: %s", room->hotel_name);			// вывод информации о комнате
 	printf("\nRoom number: %u", room->number);
 	printf("\nRoom type: ");
 
