@@ -27,7 +27,7 @@ void task1(void){
         переменные. С помощью указателя увеличить значение переменной а в 2 раза. Затем
         поменять местами значения переменных а и b через их указатели.
     */
-    int a, b, temp;
+    int a, b;
     int *p1, *p2;
 
     printf("Enter integer values for a and b: ");
@@ -38,9 +38,9 @@ void task1(void){
 
     *p1 *= 2;
 
-    temp = *p1;     // меняем значения местами
-    *p1 = *p2;
-    *p2 = temp;
+	*p1 = *p1 ^ *p2;
+	*p2 = *p1 ^ *p2;	// p2 = p1
+	*p1 = *p1 ^ *p2;
 
     printf("a: %d\nb: %d", *p1,*p2);
 }
@@ -52,17 +52,19 @@ void task2(void){
     */
     int *p1 = (int*)calloc(1, sizeof(int));			// выделяем память под указатели
     if(p1 == NULL){
-        printf("Can't allocate memory\n");
+		fprintf(stderr, "Memory allocation failed\n");
+		free(p1);
         exit(0);
     }
     int *p2 = (int*)calloc(1, sizeof(int));
     if(p2 == NULL){
-        printf("Can't allocate memory\n");
+        fprintf(stderr, "Memory allocation failed\n");
+		free(p2);
         exit(0);
     }
     
     printf("Enter integer values for a and b: ");	
-    scanf("%d %d", p1,p2);					// считываем значения
+    scanf("%d %d", p1,p2);						// считываем значения
 
     *p1 /= 2;
     printf("a: %d\nb: %d", *p1,*p2);
@@ -78,11 +80,12 @@ void task3(void){
     */
     int n, count;
     double product;
+
     count = 0;
     product = 1.0;
 
-    do{								
-        printf("\nEnter the size of array: ");				// считываем размер массива
+    do{											// считываем размер массива
+        printf("\nEnter the size of array: ");
         scanf("%d", &n);
         if(n <= 0){
             printf("Array size should be positive integer");
@@ -91,20 +94,34 @@ void task3(void){
 
     double *a1 = (double*)calloc(n, sizeof(double));
     if(a1 == NULL){
-        printf("Can't allocate memory\n");
+        fprintf(stderr, "Memory allocation failed\n");
+		free(a1);
         exit(0);
     }
 
-    int *less1_indexes = (int*)calloc(n, sizeof(int));			// создаем массив для элементов, меньших 1
-    if(less1_indexes == NULL){
-        printf("Can't allocate memory\n");
-        exit(0);
-    }
+    int *less1_indexes;		
 
-    for(int i = 0; i < n; i++){						// ищем элементы, считаем количество и произведение 
+    for(int i = 0; i < n; i++){								// ищем элементы, считаем количество и произведение 
         printf("\nEnter element №%d of the array: ", i+1);
         scanf("%lf", a1+i);
         if(a1[i] < UPPER_LIMIT){
+			if(count == 0)
+			{
+				less1_indexes = (int*)calloc(1, sizeof(int));
+				if(less1_indexes == NULL){
+				    fprintf(stderr, "Memory allocation failed\n");
+					free(less1_indexes);
+				    exit(0);
+				}
+			}
+			else{
+				less1_indexes = (int *)realloc(less1_indexes, sizeof(int)*(count+1));
+				if(less1_indexes == NULL){
+				    fprintf(stderr, "Memory reallocation failed\n");
+					free(less1_indexes);
+				    exit(0);
+				}
+			}
             less1_indexes[count] = i;
             product *= a1[i];
             ++count;
@@ -151,7 +168,8 @@ void task4(void){
 
     b = (double*)calloc(n, sizeof(double));
     if(b == NULL){
-        printf("Can't allocate memory\n");
+        fprintf(stderr, "Memory allocation failed\n");
+		free(b);
         exit(0);
     }
 
@@ -160,6 +178,23 @@ void task4(void){
         printf("\nEnter element №%d of the array: ", i+1);
         scanf("%lf", b+i);
         if(b[i] > 0){
+			if(positive_counter == 0){
+				C = (double*)calloc(1, sizeof(double));
+				if(C == NULL){
+				    fprintf(stderr, "Memory allocation failed\n");
+					free(C);
+				    exit(0);
+				}
+			}
+			else{
+				C = (double *)realloc(C, sizeof(double)*(positive_counter+1));
+				if(C == NULL){
+				    fprintf(stderr, "Memory reallocation failed\n");
+					free(C);
+				    exit(0);
+				}
+			}
+			C[positive_counter] = 5 * b[i];
             ++positive_counter;
         }
     }
@@ -167,19 +202,6 @@ void task4(void){
 		printf("\n\nThere are no positive elements in the array!\n");
 	}
 	else{
-    	C = (double*)calloc(positive_counter, sizeof(double));
-    	if(C == NULL){
-    	    printf("Can't allocate memory\n");
-    	    exit(0);
-    	}
-	
-    	c_ind = 0;
-    	for(int i = 0; i < n; i++){
-    	    if(b[i] > 0){
-    	        C[c_ind] = 5 * b[i];
-    	        ++c_ind;
-    	    }
-		}
     	selection_sort(C, positive_counter);				
 
     	printf("\n\nThe result array(positive * 5): \n");
@@ -188,7 +210,6 @@ void task4(void){
     	}
 		free(C);
 	}
-
 	free(b);
 }
 
@@ -236,7 +257,9 @@ void task5(void){
 }
 
 void min_of_two(double a, double b, double *res){
-    *res = a < b ? a : b;
+	if(res != NULL){
+		*res = a < b ? a : b;
+	}
 }
 
 void task6(void){
@@ -253,7 +276,13 @@ void task6(void){
     int max_circle_index = 0;
     
     family = (CIRCLE**)calloc(CIRCLE_COUNT, sizeof(CIRCLE*));
+	if(family == NULL){
+		fprintf(stderr, "Memory allocation failed\n");
+		free(family);
+		exit(0);
+	}
 
+	
     for (int i = 0; i < CIRCLE_COUNT; i++) {
         add_circle(&family[i], CIRCLE_LIMIT);
     }
@@ -281,16 +310,18 @@ void task6(void){
 void add_circle(CIRCLE **circle, int limit){						
     *circle = (CIRCLE*)calloc(1, sizeof(CIRCLE));
     if(*circle == NULL){
-        printf("Can't allocate memory\n");
+        fprintf(stderr, "Memory allocation failed\n");
+		free(*circle);
         exit(0);
     }
     (*circle)->center = (COORDINATES*)calloc(1, sizeof(COORDINATES));
     if((*circle)->center == NULL){
-        printf("Can't allocate memory\n");
+        fprintf(stderr, "Memory allocation failed\n");
+		free((*circle)->center);
         exit(0);
     }
     (*circle)->radius = (double)rand()/RAND_MAX * limit;
-    (*circle)->center->x = ((double)rand()/RAND_MAX*2.0-1.0)*limit;		// генерим координаты от -limit до +limit
+    (*circle)->center->x = ((double)rand()/RAND_MAX*2.0-1.0)*limit;	// генерим координаты от -limit до +limit
     (*circle)->center->y = ((double)rand()/RAND_MAX*2.0-1.0)*limit;
 }
 
@@ -338,16 +369,17 @@ void task7(void){
 	printf("\n\n----- SORTED BY NUMBER \"CITY\" ROOMS ---------");
 	display_rooms(city_rooms, city_amount);
 
-	release_rooms(rooms, ROOMS_COUNT);					// освобождаем память
+	release_rooms(rooms, ROOMS_COUNT);				// освобождаем память
 	release_rooms(city_rooms, city_amount);
 }
 
 void create_rooms(APARTMENT *** rooms, int amount){
 
-	srand(time(NULL));							
-	*rooms = (APARTMENT**)calloc(amount, sizeof(APARTMENT*));		// выделяем память под массив и заполняем
+	srand(time(NULL));						// выделяем память под массив и заполняем
+	*rooms = (APARTMENT**)calloc(amount, sizeof(APARTMENT*));
 	if(rooms == NULL){
-    	printf("Can't allocate memory\n");
+    	fprintf(stderr, "Memory allocation failed\n");
+		free(rooms);
     	exit(0);
 	}
 
@@ -361,13 +393,15 @@ void add_room(APARTMENT ** room){
 
 	*room = (APARTMENT*)calloc(1, sizeof(APARTMENT));			// выделяем память под структуру
 	if(*room == NULL){
-	    printf("Can't allocate memory\n");
+	    fprintf(stderr, "Memory allocation failed\n");
+		free(room);
 	    exit(0);
 	}
 
 	(*room)->hotel_name = (char*)calloc(HOTEL_NAME_SIZE, sizeof(char));	// память для названия отеля
 	if((*room)->hotel_name == NULL){
-	    printf("Can't allocate memory\n");
+	    fprintf(stderr, "Memory allocation failed\n");
+		free((*room)->hotel_name);
 	    exit(0);
 	}
 
@@ -413,6 +447,11 @@ int copy_city_rooms(APARTMENT ** rooms, APARTMENT *** city_rooms){
 	const char c[] = "City";
 	int * city_indexes = (int*)calloc(ROOMS_COUNT, sizeof(int));	// массив для индексов комнат 
 									// с названием отеля, начинающегося на "City"
+	if(city_indexes == NULL){
+		fprintf(stderr, "Memory allocation failed\n");
+		free(city_indexes);
+		exit(0);
+	}
 	for(int i = 0; i < ROOMS_COUNT; i++){				
 		bool is_equal = true;					// ищем комнаты, считаем количество, заносим индексы
 
@@ -429,7 +468,8 @@ int copy_city_rooms(APARTMENT ** rooms, APARTMENT *** city_rooms){
 
 	*city_rooms = (APARTMENT**)calloc(counter, sizeof(APARTMENT*));
 	if(city_rooms == NULL){
-		printf("Can't allocate memory\n");
+		fprintf(stderr, "Memory allocation failed\n");
+		free(city_rooms);
 		exit(0);
 	}
 
