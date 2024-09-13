@@ -38,14 +38,16 @@ void task5(void);
 void min_of_two(double a, double b, double *res);
 
 void task6(void);
-void add_circle(CIRCLE **circle, int count);
+void add_circle(CIRCLE **circle, int created, int count);
 void print_circle_info(CIRCLE * circle);
 double get_circle_radius(CIRCLE *circle);
 void release_circle_info(CIRCLE * circle);
 
+void release_circles(CIRCLE **family, int amount);
+
 void task7(void);
 void create_rooms(APARTMENT *** rooms, int amount);
-void add_room(APARTMENT ** room);
+void add_room(APARTMENT ** room, int created);
 void display_rooms(APARTMENT ** rooms, int amount);
 void print_room_info(APARTMENT * room);
 int copy_city_rooms(APARTMENT ** rooms, APARTMENT *** city_rooms);
