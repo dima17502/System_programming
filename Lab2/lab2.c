@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h> 			// для exit
 #include <time.h>
-#include <string.h>			// strcat
+#include <string.h>				// strcat
 #include <stdbool.h>
 
 #include "lab2.h"
@@ -38,9 +38,9 @@ void task1(void){
 
     *p1 *= 2;
 
-    *p1 = *p1 ^ *p2;	// меняем значения без использования третьей переменной
-    *p2 = *p1 ^ *p2;	// p2 = p1
-    *p1 = *p1 ^ *p2;
+	*p1 = *p1 ^ *p2;
+	*p2 = *p1 ^ *p2;	// p2 = p1
+	*p1 = *p1 ^ *p2;
 
     printf("a: %d\nb: %d", *p1,*p2);
 }
@@ -52,25 +52,24 @@ void task2(void){
     */
     int *p1 = (int*)calloc(1, sizeof(int));			// выделяем память под указатели
     if(p1 == NULL){
-	fprintf(stderr, "Memory allocation failed\n");
-	free(p1);
+		fprintf(stderr, "Memory allocation failed\n");
         exit(0);
     }
     int *p2 = (int*)calloc(1, sizeof(int));
     if(p2 == NULL){
         fprintf(stderr, "Memory allocation failed\n");
-	free(p2);					// Чтобы не было утечек памяти
+		free(p1);
         exit(0);
     }
     
     printf("Enter integer values for a and b: ");	
-    scanf("%d %d", p1,p2);				// считываем значения
+    scanf("%d %d", p1,p2);						// считываем значения
 
     *p1 /= 2;
     printf("a: %d\nb: %d", *p1,*p2);
 
-    free(p1);
-    free(p2);
+	free(p1);
+	free(p2);
 }
 
 void task3(void){
@@ -84,7 +83,7 @@ void task3(void){
     count = 0;
     product = 1.0;
 
-    do{										// считываем размер массива
+    do{														// считываем размер массива
         printf("\nEnter the size of array: ");
         scanf("%d", &n);
         if(n <= 0){
@@ -95,7 +94,6 @@ void task3(void){
     double *a1 = (double*)calloc(n, sizeof(double));
     if(a1 == NULL){
         fprintf(stderr, "Memory allocation failed\n");
-	free(a1);
         exit(0);
     }
 
@@ -110,7 +108,7 @@ void task3(void){
 				less1_indexes = (int*)calloc(1, sizeof(int));
 				if(less1_indexes == NULL){
 				    fprintf(stderr, "Memory allocation failed\n");
-				    free(less1_indexes);
+					free(a1);
 				    exit(0);
 				}
 			}
@@ -118,7 +116,7 @@ void task3(void){
 				less1_indexes = (int *)realloc(less1_indexes, sizeof(int)*(count+1));
 				if(less1_indexes == NULL){
 				    fprintf(stderr, "Memory reallocation failed\n");
-				    free(less1_indexes);
+					free(a1);
 				    exit(0);
 				}
 			}
@@ -142,8 +140,8 @@ void task3(void){
             printf("%d ", less1_indexes[i]+1);
         }
         printf("\n\nAmount of numbers less than 1 is: %d\nProduct of numbers less than 1: %lf\n\n", count, product);
-	free(less1_indexes);
-    }
+		free(less1_indexes);
+	}
 
 	free(a1);
 }
@@ -169,7 +167,6 @@ void task4(void){
     b = (double*)calloc(n, sizeof(double));
     if(b == NULL){
         fprintf(stderr, "Memory allocation failed\n");
-	free(b);
         exit(0);
     }
 
@@ -182,7 +179,7 @@ void task4(void){
 				C = (double*)calloc(1, sizeof(double));
 				if(C == NULL){
 				    fprintf(stderr, "Memory allocation failed\n");
-				    free(C);
+					free(b);
 				    exit(0);
 				}
 			}
@@ -190,7 +187,7 @@ void task4(void){
 				C = (double *)realloc(C, sizeof(double)*(positive_counter+1));
 				if(C == NULL){
 				    fprintf(stderr, "Memory reallocation failed\n");
-				    free(C);
+					free(b);
 				    exit(0);
 				}
 			}
@@ -200,8 +197,8 @@ void task4(void){
     }
     if(positive_counter == 0){
 		printf("\n\nThere are no positive elements in the array!\n");
-    }
-    else{
+	}
+	else{
     	selection_sort(C, positive_counter);				
 
     	printf("\n\nThe result array(positive * 5): \n");
@@ -209,8 +206,8 @@ void task4(void){
     	    printf("%lf ", C[i]);
     	}
 		free(C);
-     }
-     free(b);
+	}
+	free(b);
 }
 
 void selection_sort(double *C, int n){
@@ -226,7 +223,7 @@ void selection_sort(double *C, int n){
                 min_ind = j;
             }
         }
-        if (min_ind != i)			// если минимальный не на своем месте, переставляем с текущим
+        if (min_ind != i)					// если минимальный не на своем месте, переставляем с текущим
         {
             temp = C[i];
             C[i] = C[min_ind];
@@ -276,15 +273,14 @@ void task6(void){
     int max_circle_index = 0;
     
     family = (CIRCLE**)calloc(CIRCLE_COUNT, sizeof(CIRCLE*));
-    if(family == NULL){
-	fprintf(stderr, "Memory allocation failed\n");
-	free(family);
-	exit(0);
-    }
+	if(family == NULL){
+		fprintf(stderr, "Memory allocation failed\n");
+		exit(0);
+	}
 
 	
     for (int i = 0; i < CIRCLE_COUNT; i++) {
-        add_circle(&family[i], CIRCLE_LIMIT);
+        add_circle(&family[i], i, CIRCLE_LIMIT);
     }
 
     printf("\n------ %d GENERATED CIRCLES ----------", CIRCLE_COUNT);
@@ -301,23 +297,21 @@ void task6(void){
     printf("\n------- CIRCLE WITH MAX RADIUS -------");
     print_circle_info(family[max_circle_index]);
 
-    for (int i = 0; i < CIRCLE_COUNT; i++) {
-        release_circle_info(family[i]);
-    }
-    free(family);
+	release_circles(family, CIRCLE_COUNT);
 }
 
-void add_circle(CIRCLE **circle, int limit){						
+void add_circle(CIRCLE **circle, int created, int limit){						
     *circle = (CIRCLE*)calloc(1, sizeof(CIRCLE));
     if(*circle == NULL){
         fprintf(stderr, "Memory allocation failed\n");
-		free(*circle);
+		release_circles(circle, created);
         exit(0);
     }
     (*circle)->center = (COORDINATES*)calloc(1, sizeof(COORDINATES));
     if((*circle)->center == NULL){
         fprintf(stderr, "Memory allocation failed\n");
-		free((*circle)->center);
+		free(*circle);
+		release_circles(circle, created);
         exit(0);
     }
     (*circle)->radius = (double)rand()/RAND_MAX * limit;
@@ -340,6 +334,12 @@ void release_circle_info(CIRCLE *circle){
     free(circle);
 }
 
+void release_circles(CIRCLE **family, int amount){
+	for (int i = 0; i < amount; i++) {
+    	release_circle_info(family[i]);
+	}
+	free(family);
+}
 
 void task7(void){
     /*
@@ -369,52 +369,52 @@ void task7(void){
 	printf("\n\n----- SORTED BY NUMBER \"CITY\" ROOMS ---------");
 	display_rooms(city_rooms, city_amount);
 
-	release_rooms(rooms, ROOMS_COUNT);				// освобождаем память
+	release_rooms(rooms, ROOMS_COUNT);			// освобождаем память
 	release_rooms(city_rooms, city_amount);
 }
 
 void create_rooms(APARTMENT *** rooms, int amount){
 
-	srand(time(NULL));						// выделяем память под массив и заполняем
+	srand(time(NULL));											// выделяем память под массив и заполняем
 	*rooms = (APARTMENT**)calloc(amount, sizeof(APARTMENT*));
 	if(rooms == NULL){
-    		fprintf(stderr, "Memory allocation failed\n");
-		free(rooms);
-    		exit(0);
+    	fprintf(stderr, "Memory allocation failed\n");
+    	exit(0);
 	}
 
 	for (int i = 0; i < amount; i++) {
-		add_room(&((*rooms)[i]));
+		add_room(&((*rooms)[i]), i);
 	}
 }
 
-void add_room(APARTMENT ** room){
+void add_room(APARTMENT ** room, int created){
 	int start_ind;
 
 	*room = (APARTMENT*)calloc(1, sizeof(APARTMENT));			// выделяем память под структуру
 	if(*room == NULL){
-	    	fprintf(stderr, "Memory allocation failed\n");
-		free(room);
-	    	exit(0);
+	    fprintf(stderr, "Memory allocation failed\n");
+		release_rooms(room, created);
+	    exit(0);
 	}
 
 	(*room)->hotel_name = (char*)calloc(HOTEL_NAME_SIZE, sizeof(char));	// память для названия отеля
 	if((*room)->hotel_name == NULL){
-	    	fprintf(stderr, "Memory allocation failed\n");
-		free((*room)->hotel_name);
-	    	exit(0);
+	    fprintf(stderr, "Memory allocation failed\n");
+		free(*room);
+		release_rooms(room, created);
+	    exit(0);
 	}
 
 	start_ind = 0;
 	if((double)rand()/RAND_MAX < CITY_FREQUENCY){								
-		strcat((*room)->hotel_name,"City");				// если карта легла, добавляем City в начало названия отеля
+		strcat((*room)->hotel_name,"City");					// если карта легла, добавляем City в начало названия отеля
 		start_ind = 4;
 	}
 
 	for (int i = start_ind; i < HOTEL_NAME_SIZE; i++) {
 		(*room)->hotel_name[i] = '0' + rand() % 72;			// генерим остаток названия отеля
 	}
-	(*room)->hotel_name[HOTEL_NAME_SIZE - 1] = '\0';			// последний штрих
+	(*room)->hotel_name[HOTEL_NAME_SIZE - 1] = '\0';		// последний штрих
 
 	(*room)->number = rand()%MAX_ROOM_NUMBER;				// генерим остальные поля
 	(*room)->capacity = rand()%(MAX_ROOM_CAPACITY-1) + 1;		
@@ -446,14 +446,14 @@ int copy_city_rooms(APARTMENT ** rooms, APARTMENT *** city_rooms){
 	int counter = 0;
 	const char c[] = "City";
 	int * city_indexes = (int*)calloc(ROOMS_COUNT, sizeof(int));	// массив для индексов комнат 
-									// с названием отеля, начинающегося на "City"
+																	// с названием отеля, начинающегося на "City"
 	if(city_indexes == NULL){
 		fprintf(stderr, "Memory allocation failed\n");
-		free(city_indexes);
+		release_rooms(rooms, ROOMS_COUNT);
 		exit(0);
 	}
 	for(int i = 0; i < ROOMS_COUNT; i++){				
-		bool is_equal = true;					// ищем комнаты, считаем количество, заносим индексы
+		bool is_equal = true;							// ищем комнаты, считаем количество, заносим индексы
 
 		for(int j = 0; j < 4;j++){
 			if(c[j] != (rooms[i]->hotel_name)[j]){		// сравниваем названия отелей
@@ -469,11 +469,11 @@ int copy_city_rooms(APARTMENT ** rooms, APARTMENT *** city_rooms){
 	*city_rooms = (APARTMENT**)calloc(counter, sizeof(APARTMENT*));
 	if(city_rooms == NULL){
 		fprintf(stderr, "Memory allocation failed\n");
-		free(city_rooms);
+		release_rooms(rooms, ROOMS_COUNT);
 		exit(0);
 	}
 
-	for (int i = 0; i < counter; i++) {				// переставляем все поля структуры
+	for (int i = 0; i < counter; i++) {					// переставляем все поля структуры
 		(*city_rooms)[i] = rooms[city_indexes[i]];
 	}
 	return counter;
@@ -481,7 +481,7 @@ int copy_city_rooms(APARTMENT ** rooms, APARTMENT *** city_rooms){
 
 void sort_rooms(APARTMENT *** rooms, int n){
 	APARTMENT * temp;
-	for (int i = 0; i < n - 1; i++)					// сортировка выбором, только в профиль
+	for (int i = 0; i < n - 1; i++)					// сортировка выбором
 	{
 	    int min_ind = i;
 	    for (int j = i + 1; j < n; j++)
@@ -501,7 +501,7 @@ void sort_rooms(APARTMENT *** rooms, int n){
 }
 
 void print_room_info(APARTMENT * room){
-	printf("\n\nHotel name: %s", room->hotel_name);			// вывод информации о комнате
+	printf("\n\nHotel name: %s", room->hotel_name);		// вывод информации о комнате
 	printf("\nRoom number: %u", room->number);
 	printf("\nRoom type: ");
 
